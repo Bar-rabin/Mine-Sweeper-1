@@ -1,0 +1,18 @@
+body {
+  text-align: center;
+}
+table {
+  margin: 100px auto;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #dcdcdc;
+}
+
+.cell.shown {
+  background-color: #f0f0f0;
+}
