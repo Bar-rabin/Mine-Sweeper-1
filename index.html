@@ -4,14 +4,26 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body onload="onInit()">
+    <h2 class="mode" onclick="darkMode(this)">🌚</h2>
+    <h1>Mine Sweeper</h1>
+    <h1 class="modal">Game Over</h1>
     <div>
+      <h2 class="emoji" onclick="resetGame(this)">😃</h2>
+      <h2 class="live">❤️‍🩹 ❤️‍🩹 ❤️‍🩹</h2>
+      <h2 class="hint">
+        <p1 onclick="getHint(this)">💡</p1><p1 onclick="getHint(this)">💡</p1
+        ><p1 onclick="getHint(this)">💡</p1>
+      </h2>
       <table>
         <tbody class="board"></tbody>
       </table>
+      <button class="level" onclick="levelUp(this)">Beginner</button
+      ><button class="level" onclick="levelUp(this)">Medium</button
+      ><button class="level" onclick="levelUp(this)">Expert</button>
     </div>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>

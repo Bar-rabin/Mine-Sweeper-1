@@ -1,5 +1,6 @@
 body {
   text-align: center;
+  background-color: antiquewhite;
 }
 table {
   margin: 100px auto;
@@ -13,6 +14,18 @@ table {
   background-color: #dcdcdc;
 }
 
-.cell.shown {
-  background-color: #f0f0f0;
+.modal {
+  background-color: rgb(231, 185, 124);
+  display: none;
+}
+
+.emoji,
+.level,
+.hint {
+  cursor: pointer;
+}
+
+.mode {
+  padding-left: 70%;
+  cursor: pointer;
 }

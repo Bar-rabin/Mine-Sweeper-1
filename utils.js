@@ -40,15 +40,13 @@ function createMat(rows, cols) {
   return mat
 }
 
-// location is an object like this - { i: 2, j: 7 }
 function renderCell(i, j, value) {
-  // Select the elCell and set the value
+  var cell = gBoard[i][j]
   const elCell = document.querySelector(`.cell-${i}-${j}`)
+  if (value === 0) value = ''
   elCell.innerHTML = value
-}
-
-function getRandomIntInclusive(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  elCell.style.backgroundColor = 'darkgrey'
+  cell.isShown = true
 }
 
 function getRandomColor() {
@@ -71,25 +69,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled) // The maximum is exclusive and the minimum is inclusive
 }
 
-function findEmptyPos(gBoard) {
-  var emptyPoss = []
-  for (var i = 0; i < gBoard.length; i++) {
-    for (var j = 0; j < gBoard[i].length; j++) {
-      var cell = gBoard[i][j]
-
-      if (cell === ' ') {
-        var pos = { i: i, j: j }
-
-        emptyPoss.push(pos)
-      }
-    }
-  }
-
-  var randIdx = getRandomInt(1, emptyPoss.length - 2)
-  var emptyPos = emptyPoss[randIdx]
-  return emptyPos
-}
-
 function setMinesNegsCount(cellI, cellJ) {
   var minesAroundCount = 0
   for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -100,7 +79,7 @@ function setMinesNegsCount(cellI, cellJ) {
       if (i === cellI && j === cellJ) continue
 
       var cell = gBoard[i][j]
-      if (cell.isMine === true) minesAroundCount++
+      if (cell.isMine) minesAroundCount++
     }
   }
 
@@ -113,15 +92,24 @@ function findEmptyPos(gBoard) {
     for (var j = 0; j < gBoard[i].length; j++) {
       var cell = gBoard[i][j]
 
-      if (cell === ' ') {
-        var pos = { i: i, j: j }
+      var pos = { i: i, j: j }
 
-        emptyPoss.push(pos)
-      }
+      emptyPoss.push(pos)
     }
   }
 
   var randIdx = getRandomInt(1, emptyPoss.length - 2)
   var emptyPos = emptyPoss[randIdx]
+  console.log(emptyPos)
   return emptyPos
+}
+function goOverTheNeighbors(gBoard) {
+  for (var i = cellI - 1; i <= cellI + 1; i++) {
+    if (i < 0 || i >= gBoard.length) continue
+
+    for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+      if (j < 0 || j >= gBoard[0].length) continue
+      if (i === cellI && j === cellJ) continue
+    }
+  }
 }
