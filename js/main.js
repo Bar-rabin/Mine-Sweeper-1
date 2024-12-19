@@ -144,8 +144,9 @@ function gameOver() {
       if (cell.isMine) renderCell(i, j, MINE)
     }
   }
-  gElEmoji.innerHTML = '😭'
+
   clearTimeout(gtimeOut)
+  gElEmoji.innerHTML = '😭'
   showTheMOdal()
 }
 
