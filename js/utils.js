@@ -90,18 +90,19 @@ function findEmptyPos(gBoard) {
   var emptyPoss = []
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard[i].length; j++) {
-      var cell = gBoard[i][j]
-
-      var pos = { i: i, j: j }
-
-      emptyPoss.push(pos)
+      if (!gBoard[i][j].isMine) {
+        var pos = { i: i, j: j }
+        emptyPoss.push(pos)
+      }
     }
   }
 
-  var randIdx = getRandomInt(1, emptyPoss.length - 2)
-  var emptyPos = emptyPoss[randIdx]
-  console.log(emptyPos)
-  return emptyPos
+  if (emptyPoss.length > 0) {
+    var randIdx = getRandomInt(0, emptyPoss.length)
+    var emptyPos = emptyPoss[randIdx]
+    return emptyPos
+  }
+  return null
 }
 function goOverTheNeighbors(gBoard) {
   for (var i = cellI - 1; i <= cellI + 1; i++) {

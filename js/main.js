@@ -13,7 +13,7 @@ var gIsDarkMode
 var gRandomMines
 var gNumMines = 2
 
-var gBoard = buildBoard()
+var gBoard
 var gLevel = {}
 
 var gGame = {
@@ -34,6 +34,7 @@ function onInit() {
   gElEmoji.innerHTML = '😃'
   gLiveCount = 3
   gGame.shownCount = 0
+
   gIsHint = false
   gIsDarkMode = false
 }
@@ -54,9 +55,6 @@ function buildBoard() {
       }
     }
   }
-  // board[0][0].isMine = true
-  // board[3][1].isMine = true
-  // board[1][2].isMine = true
 
   for (var i = 0; i < gLevel.MINES; i++) {
     randomMine(board)
@@ -97,7 +95,6 @@ function renderBoard(board) {
 
 function onCellClicked(elCell, i, j) {
   if (!gGame.isOn) return
-  console.log(gBoard[i][j])
 
   if (gIsHint) {
     var count = setMinesNegsCount(i, j)
@@ -119,10 +116,10 @@ function onCellClicked(elCell, i, j) {
   checkIfVictory()
 
   if (elCell.isMine) {
-    clickOnMine(elCell, i, j)
+    clickOnMine(i, j)
+  } else {
+    expandShown(i, j)
   }
-
-  expandShown(i, j)
 }
 
 function expandShown(cellI, cellJ) {
@@ -170,12 +167,26 @@ function removeLive() {
   if (gLiveCount === 0) elLive.innerHTML = ''
 }
 
-function resetGame(elButton) {
+function resetGame() {
   onInit()
+  if (gSizeBoard === 4) {
+    gNumMines = 2
+    changeMineNum()
+  }
+  if (gSizeBoard === 8) {
+    gNumMines = 14
+    changeMineNum()
+  }
+  if (gSizeBoard === 12) {
+    gNumMines = 32
+    changeMineNum()
+  }
 }
 
-function clickOnMine(elCell, i, j) {
+function clickOnMine(i, j) {
   gLiveCount--
+  gNumMines--
+  changeMineNum()
   renderCell(i, j, MINE)
   gElEmoji.innerHTML = '🤯'
   gtimeOut = setTimeout(() => {
@@ -195,6 +206,7 @@ function checkIfVictory() {
       var currCell = gBoard[i][j]
 
       if (!currCell.isShown && !currCell.isMine) return
+      if (gSizeBoard !== 4 && gLiveCount === 0) return
     }
   }
   gIsvictory = true
@@ -243,14 +255,17 @@ function levelUp(elLevel) {
   if (elLevel.innerHTML === 'Beginner') {
     gSizeBoard = 4
     gNumMines = 2
+    resetGame()
   }
   if (elLevel.innerHTML === 'Medium') {
     gSizeBoard = 8
     gNumMines = 14
+    resetGame()
   }
   if (elLevel.innerHTML === 'Expert') {
     gSizeBoard = 12
     gNumMines = 32
+    resetGame()
   }
   onInit()
 }
@@ -259,6 +274,10 @@ function onCellMarked(event, i, j) {
   event.preventDefault()
   var currCell = gBoard[i][j]
   if (!currCell.isShown || !currCell.isMarked) {
+    if (currCell.isMine) {
+      gNumMines--
+      changeMineNum()
+    }
     currCell.isMarked = true
     renderCell(i, j, MARK)
   }
@@ -282,5 +301,15 @@ function darkMode(elMode) {
 
 function randomMine(board) {
   var randomIdx = findEmptyPos(board)
+
+  while (board[randomIdx.i][randomIdx.j].isMine) {
+    randomIdx = findEmptyPos(board)
+  }
+
   board[randomIdx.i][randomIdx.j].isMine = true
+}
+
+function changeMineNum() {
+  var elNumMines = document.querySelector('.mines-count span')
+  elNumMines.innerHTML = gNumMines
 }

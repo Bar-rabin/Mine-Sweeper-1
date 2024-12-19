@@ -20,7 +20,6 @@ table {
 }
 
 .emoji,
-.level,
 .hint {
   cursor: pointer;
 }
@@ -28,4 +27,14 @@ table {
 .mode {
   padding-left: 70%;
   cursor: pointer;
+}
+
+.level {
+  cursor: pointer;
+  background-color: burlywood;
+  border-radius: 45%;
+  padding: 2%;
+}
+.mines-count {
+  padding-right: 70%;
 }
