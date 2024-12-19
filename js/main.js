@@ -4,7 +4,7 @@ const MINE = '💣'
 const MARK = '🚩'
 
 var gElEmoji = document.querySelector('.emoji')
-var gtimeOut
+var gTimeOut
 var gLiveCount
 var gIsvictory
 var gIsHint
@@ -25,18 +25,18 @@ var gGame = {
 function onInit() {
   gGame.isOn = true
   gBoard = buildBoard()
-  var elModal = document.querySelector('.modal')
-  elModal.style.display = 'none'
   renderBoard(gBoard)
   gIsvictory = false
+  gLiveCount = 3
+  gGame.shownCount = 0
+  gIsHint = false
+  gIsDarkMode = false
+
+  var elModal = document.querySelector('.modal')
+  elModal.style.display = 'none'
   var elLive = document.querySelector('.live')
   elLive.innerHTML = '❤️‍🩹 ❤️‍🩹 ❤️‍🩹'
   gElEmoji.innerHTML = '😃'
-  gLiveCount = 3
-  gGame.shownCount = 0
-
-  gIsHint = false
-  gIsDarkMode = false
 }
 function buildBoard() {
   gLevel = {
@@ -67,10 +67,10 @@ function renderBoard(board) {
   const elBoard = document.querySelector('.board')
   var strHTML = ''
 
-  for (var i = 0; i < gBoard.length; i++) {
+  for (var i = 0; i < board.length; i++) {
     strHTML += '<tr>\n'
-    for (var j = 0; j < gBoard[0].length; j++) {
-      const currCell = gBoard[i][j]
+    for (var j = 0; j < board[0].length; j++) {
+      const currCell = board[i][j]
 
       var cellClass = getClassName({ i, j })
 
@@ -102,7 +102,6 @@ function onCellClicked(elCell, i, j) {
     if (!elCell.isMarked && !elCell.isShown) {
       if (elCell.minesAroundCount === 0) {
         expandShown(i, j)
-        // showAroundcell(i, j)
       }
     }
     renderCell(i, j, count)
@@ -145,31 +144,53 @@ function gameOver() {
     }
   }
 
-  clearTimeout(gtimeOut)
+  clearTimeout(gTimeOut)
   gElEmoji.innerHTML = '😭'
   showTheMOdal()
 }
 
 function showTheMOdal() {
   gGame.isOn = false
-
   var elModal = document.querySelector('.modal')
-  if (gIsvictory) {
+
+  if (gLiveCount !== 0) {
+    gElEmoji.innerHTML = '😎'
     elModal.innerHTML = 'You Won!'
     elModal.style.display = 'block'
+  } else {
+    elModal.innerHTML = 'Game Over!'
+    elModal.style.display = 'block'
   }
-  elModal.style.display = 'block'
 }
 
+function clickOnMine(i, j) {
+  gLiveCount--
+  gNumMines--
+  if (gLiveCount === 0) {
+    var elLive = document.querySelector('.live')
+    if (gLiveCount === 0) elLive.innerHTML = ''
+    gameOver()
+    return
+  }
+  var elNumMines = document.querySelector('.mines-count span')
+  elNumMines.innerHTML = gNumMines
+  renderCell(i, j, MINE)
+  gElEmoji.innerHTML = '🤯'
+  if (gIsvictory) {
+    gElEmoji.innerHTML = '😎'
+  }
+  gTimeOut = setTimeout(() => {
+    gElEmoji.innerHTML = '😃'
+  }, 1000)
+  removeLive()
+}
 function removeLive() {
   var elLive = document.querySelector('.live')
   if (gLiveCount === 2) elLive.innerHTML = '❤️‍🩹 ❤️‍🩹'
   if (gLiveCount === 1) elLive.innerHTML = '❤️‍🩹'
-  if (gLiveCount === 0) elLive.innerHTML = ''
 }
 
 function resetGame() {
-  onInit()
   if (gSizeBoard === 4) {
     gNumMines = 2
     changeMineNum()
@@ -182,23 +203,7 @@ function resetGame() {
     gNumMines = 32
     changeMineNum()
   }
-}
-
-function clickOnMine(i, j) {
-  gLiveCount--
-  gNumMines--
-  changeMineNum()
-  renderCell(i, j, MINE)
-  gElEmoji.innerHTML = '🤯'
-  gtimeOut = setTimeout(() => {
-    gElEmoji.innerHTML = '😃'
-  }, 1000)
-  removeLive()
-
-  if (gLiveCount === 0) {
-    gameOver()
-    return
-  }
+  onInit()
 }
 
 function checkIfVictory() {
@@ -208,10 +213,10 @@ function checkIfVictory() {
 
       if (!currCell.isShown && !currCell.isMine) return
       if (gSizeBoard !== 4 && gLiveCount === 0) return
+      if (gLiveCount === 0) return
     }
   }
   gIsvictory = true
-  gElEmoji.innerHTML = '😎'
   showTheMOdal()
 }
 
@@ -253,20 +258,24 @@ function showAroundcell(cellI, cellJ) {
 }
 
 function levelUp(elLevel) {
+  gNumMines = 0
   if (elLevel.innerHTML === 'Beginner') {
     gSizeBoard = 4
     gNumMines = 2
-    resetGame()
+    var elNumMines = document.querySelector('.mines-count span')
+    elNumMines.innerHTML = gNumMines
   }
   if (elLevel.innerHTML === 'Medium') {
     gSizeBoard = 8
     gNumMines = 14
-    resetGame()
+    var elNumMines = document.querySelector('.mines-count span')
+    elNumMines.innerHTML = gNumMines
   }
   if (elLevel.innerHTML === 'Expert') {
     gSizeBoard = 12
     gNumMines = 32
-    resetGame()
+    var elNumMines = document.querySelector('.mines-count span')
+    elNumMines.innerHTML = gNumMines
   }
   onInit()
 }
@@ -302,7 +311,7 @@ function darkMode(elMode) {
 
 function randomMine(board) {
   var randomIdx = findEmptyPos(board)
-
+  console.log(randomIdx)
   while (board[randomIdx.i][randomIdx.j].isMine) {
     randomIdx = findEmptyPos(board)
   }
